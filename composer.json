@@ -1,0 +1,45 @@
+{
+    "name": "laravelflare/galleries",
+    "description": "Galleries Module for Flare CMS",
+    "keywords": [
+        "Laravel", "Flare", "CMS", "Gallery", "Galleries", "Pages", "Module"
+    ],
+    "homepage": "https://github.com/laravelflare/galleries",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Laravel Flare",
+            "homepage": "https://github.com/laravelflare"
+        },
+        {
+            "name": "Aden Fraser",
+            "email": "aden@jacobbailey.com",
+            "homepage": "https://github.com/AdenFraser"
+        }
+    ],
+    "require": {
+        "laravelflare/flare": "0.2.x-dev",
+        "laravelflare/media": "dev-master",
+        "laravelflare/cms": "dev-master"
+    },
+    "require-dev": {
+        "mockery/mockery": "~0.9.1",
+        "phpunit/phpunit": "~4.0",
+        "orchestra/testbench": "~3.1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.2-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "LaravelFlare\\Galleries\\": "src/Galleries"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LaravelFlare\\Galleries\\Tests\\": "tests/"
+        }
+    }
+}
