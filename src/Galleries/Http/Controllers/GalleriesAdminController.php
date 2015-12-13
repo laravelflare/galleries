@@ -2,12 +2,12 @@
 
 namespace LaravelFlare\Galleries\Http\Controllers;
 
-use LaravelFlare\Galleries\Gallery;
 use LaravelFlare\Cms\Slugs\Slug;
+use LaravelFlare\Galleries\Gallery;
 use LaravelFlare\Flare\Admin\AdminManager;
-use LaravelFlare\Gallerys\Http\Requests\GalleryEditRequest;
-use LaravelFlare\Gallerys\Http\Requests\GalleryCreateRequest;
 use LaravelFlare\Flare\Admin\Modules\ModuleAdminController;
+use LaravelFlare\Galleries\Http\Requests\GalleryEditRequest;
+use LaravelFlare\Galleries\Http\Requests\GalleryCreateRequest;
 
 class GalleriesAdminController extends ModuleAdminController
 {
@@ -105,11 +105,10 @@ class GalleriesAdminController extends ModuleAdminController
      */
     public function postCreate(GalleryCreateRequest $request)
     {
-        $page = Gallery::create($request->only(['name', 'content', 'template']));
-        $page->saveSlug($request->input('slug'));
-        $page->author()->associate(\Auth::user())->save();
+        $gallery = Gallery::create($request->only(['name', 'content', 'template']));
+        $gallery->saveSlug($request->input('slug'));
 
-        return redirect($this->admin->currentUrl('edit/'.$page->id))->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'Your page was successfully created.', 'dismissable' => false]]);
+        return redirect($this->admin->currentUrl('edit/'.$gallery->id))->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'Your gallery was successfully created.', 'dismissable' => false]]);
     }
 
     /**
@@ -125,7 +124,7 @@ class GalleriesAdminController extends ModuleAdminController
     /**
      * Processes a new Gallery Request.
      *
-     * Be proud of yourself, while the `set as homepage`
+     * Be proud of yourself, while the `set as homegallery`
      * logic shouldn't be here, at least you have got
      * all Otwell and finally hit the 3 characters
      * shorter per line comments nearly spot on
@@ -134,12 +133,11 @@ class GalleriesAdminController extends ModuleAdminController
      */
     public function postEdit(GalleryEditRequest $request, $galleryId)
     {
-        $page = Gallery::withTrashed()->findOrFail($galleryId)->fill($request->only(['name', 'content', 'template']));
-        $page->author()->associate(\Auth::user());
-        $page->save();
-        $page->saveSlug($request->input('slug'));
+        $gallery = Gallery::withTrashed()->findOrFail($galleryId)->fill($request->only(['name', 'template']));
+        $gallery->save();
+        $gallery->saveSlug($request->input('slug'));
 
-        return redirect($this->admin->currentUrl('edit/'.$galleryId))->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'Your page was successfully updated.', 'dismissable' => false]]);
+        return redirect($this->admin->currentUrl('edit/'.$galleryId))->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'Your gallery was successfully updated.', 'dismissable' => false]]);
     }
 
     /**
@@ -151,7 +149,7 @@ class GalleriesAdminController extends ModuleAdminController
      */
     public function getDelete($galleryId)
     {
-        return view('flare::admin.galleries.delete', ['page' => Gallery::withTrashed()->findOrFail($galleryId)]);
+        return view('flare::admin.galleries.delete', ['gallery' => Gallery::withTrashed()->findOrFail($galleryId)]);
     }
 
     /**
@@ -163,18 +161,18 @@ class GalleriesAdminController extends ModuleAdminController
      */
     public function postDelete($galleryId)
     {
-        $page = Gallery::withTrashed()->findOrFail($galleryId);
+        $gallery = Gallery::withTrashed()->findOrFail($galleryId);
 
-        if ($page->trashed()) {
-            $page->slug()->delete();
-            $page->forceDelete();
+        if ($gallery->trashed()) {
+            $gallery->slug()->delete();
+            $gallery->forceDelete();
             $action = 'deleted';
         } else {
-            $page->delete();
+            $gallery->delete();
             $action = 'trashed';
         }
 
-        return redirect($this->admin->currentUrl())->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'The page was successfully '.$action.'.', 'dismissable' => false]]);
+        return redirect($this->admin->currentUrl())->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'The gallery was successfully '.$action.'.', 'dismissable' => false]]);
     }
 
     /**
@@ -186,7 +184,7 @@ class GalleriesAdminController extends ModuleAdminController
      */
     public function getRestore($galleryId)
     {
-        return view('flare::admin.galleries.restore', ['page' => Gallery::onlyTrashed()->findOrFail($galleryId)]);
+        return view('flare::admin.galleries.restore', ['gallery' => Gallery::onlyTrashed()->findOrFail($galleryId)]);
     }
 
     /**
@@ -198,9 +196,9 @@ class GalleriesAdminController extends ModuleAdminController
      */
     public function postRestore($galleryId)
     {
-        $page = Gallery::onlyTrashed()->findOrFail($galleryId)->restore();
+        $gallery = Gallery::onlyTrashed()->findOrFail($galleryId)->restore();
 
-        return redirect($this->admin->currentUrl())->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'The page was successfully restored.', 'dismissable' => false]]);
+        return redirect($this->admin->currentUrl())->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'The gallery was successfully restored.', 'dismissable' => false]]);
     }
 
     /**
@@ -214,7 +212,7 @@ class GalleriesAdminController extends ModuleAdminController
     {
         Gallery::findOrFail($galleryId)->replicate()->save();
 
-        return redirect($this->admin->currentUrl())->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'The page was successfully cloned.', 'dismissable' => false]]);
+        return redirect($this->admin->currentUrl())->with('notifications_below_header', [['type' => 'success', 'icon' => 'check-circle', 'title' => 'Success!', 'message' => 'The gallery was successfully cloned.', 'dismissable' => false]]);
     }
 
     /**

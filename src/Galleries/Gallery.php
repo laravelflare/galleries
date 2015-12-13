@@ -44,6 +44,16 @@ class Gallery extends Model implements Sluggable, Viewable, Versionable
     protected $view = 'flare::galleries.index';
 
     /**
+     * Gallery has many Media.
+     * 
+     * @return
+     */
+    public function images()
+    {
+        return $this->belongsToMany(\LaravelFlare\Media\Media::class, 'flare_cms_gallery_images', 'gallery_id', 'media_id');
+    }
+
+    /**
      * Gallery View.
      * 
      * @return string
