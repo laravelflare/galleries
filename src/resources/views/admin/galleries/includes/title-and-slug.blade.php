@@ -11,7 +11,7 @@
             <strong>
                 Link:
             </strong>
-            {{ url() }}/
+            {{ url('') }}/
         </span>
         <input type="text" class="form-control" name="slug" value="{{ old('slug', $gallery->slug) }}" id="slug-modify-field" readonly>
         <span class="input-group-btn">
@@ -30,22 +30,22 @@
 </div>
 
 @section('enqueued-js')
-<script>
-$(document).ready(function(){
-    $('#slug-modify-button').click(function(e){
-        e.preventDefault();
+    <script>
+    $(document).ready(function(){
+        $('#slug-modify-button').click(function(e){
+            e.preventDefault();
 
-        $field = $('#slug-modify-field');
+            $field = $('#slug-modify-field');
 
-        if ($field.prop('readonly')) {
-            $field.prop('readonly', false);
-            $(this).text('Set');
-            return;
-        }
+            if ($field.prop('readonly')) {
+                $field.prop('readonly', false);
+                $(this).text('Set');
+                return;
+            }
 
-        $field.prop('readonly', true);
-        $(this).text('Edit');
+            $field.prop('readonly', true);
+            $(this).text('Edit');
+        });
     });
-});
-</script>
+    </script>
 @append
